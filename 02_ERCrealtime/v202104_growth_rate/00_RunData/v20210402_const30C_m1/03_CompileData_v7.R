@@ -1,0 +1,232 @@
+####
+#### Real-time ERC: No.3 Visualize results
+####
+
+# Load library
+library(tidyverse); packageVersion("tidyverse") # 1.3.0, 2020.11.17
+library(lubridate); packageVersion("lubridate") # 1.7.9, 2020.11.17
+library(cowplot); packageVersion("cowplot") # 1.1.0, 2020.11.17
+library(ggsci); packageVersion("ggsci") # 2.9, 2020.12.25
+library(mgcv); packageVersion("mgcv") # 1.8.33, 2020.12.25
+theme_set(theme_cowplot())
+
+# Generate output folder
+output_folder <- "03_CompileDataOut"
+dir.create(output_folder)
+dir.create("00_SessionInfo")
+
+
+# <---------------------------------------------> #
+#           data source
+# <---------------------------------------------> #
+data_imageanalysis = "02_ParticleAnalysisOut/0_results.txt"
+data_temperature = "data_temperature/20210402_temperature.txt"
+
+
+# <---------------------------------------------> #
+#           Load and compile cell data
+# <---------------------------------------------> #
+# Compile cell density data
+compile_cell_data <- function(url_imagealaysis){
+  # Extract each variable
+  d_cell0 <- read.table(url_imagealaysis, sep = c(";"))
+  image_time <- ymd_hms(str_sub(d_cell0$V2, start = 13, end = 31))
+  grid_number <- as.factor(sapply(str_split(d_cell0$V3, pattern = " "), '[', 3))
+  cell_density <- as.numeric(sapply(str_split(d_cell0$V4, pattern = " "), '[', 3))
+  cell_area <- as.numeric(sapply(str_split(d_cell0$V6, pattern = " "), '[', 3))
+  cell_dist <- as.numeric(sapply(str_split(d_cell0$V7, pattern = " "), '[', 3))
+  cell_distsd <- as.numeric(sapply(str_split(d_cell0$V8, pattern = " "), '[', 3))
+  cell_distskew <- as.numeric(sapply(str_split(d_cell0$V9, pattern = " "), '[', 3))
+  cell_distkurt <- as.numeric(sapply(str_split(d_cell0$V10, pattern = " "), '[', 3))
+  # Compile the data as tibble
+  compiled_data <- tibble(time_cell = image_time,
+                          grid_n = grid_number,
+                          density = cell_density,
+                          mean_area = cell_area,
+                          nndist = cell_dist,
+                          nndist_sd = cell_distsd,
+                          nndist_skew = cell_distskew,
+                          nndist_kurt = cell_distkurt)
+  # Return object
+  return(compiled_data)
+}
+
+d_cell <- compile_cell_data(data_imageanalysis)
+
+
+# <---------------------------------------------> #
+#         Load and compile temperature data
+# <---------------------------------------------> #
+# Load medium temperature data
+d_temp0 <- read_csv(data_temperature, skip = 2, col_names = TRUE)[-1,c(1,3)]
+colnames(d_temp0) <- c("time_temp", "temperature")
+d_temp0$time_temp <- ymd_hms(d_temp0$time_temp)
+# Write and re-load d_temperature to make col_types consistent
+write_csv(d_temp0, sprintf("%s/d_temperature.csv", output_folder)); rm(d_temp0)
+d_temperature <- read_csv(sprintf("%s/d_temperature.csv", output_folder),
+                          col_types = cols(time_temp = col_datetime(format = ""))) %>% na.omit()
+file.remove(sprintf("%s/d_temperature.csv", output_folder))
+
+
+# <---------------------------------------------> #
+#     Combine and cell density and temperature
+# <---------------------------------------------> #
+# Identify the closest date_time (initial point)
+min_df_id <- which.max(c(min(d_cell$time_cell), min(d_temperature$time_temp)))
+if(min_df_id == 1){
+  # d_cell started first
+  time_dif_init <- abs(difftime(head(d_cell$time_cell, n = 1), d_temperature$time_temp, units = "mins"))
+  which.min(time_dif_init) ==  which(time_dif_init <= 0.5)[1] # Should be TRUE
+  init_id <- which(time_dif_init <= 0.5)[1]
+  # Calculate nrow
+  cell_nrow <- nrow(d_cell)
+  temp_nrow <- nrow(d_temperature[init_id:nrow(d_temperature),])
+  # Combine data
+  if(cell_nrow <= temp_nrow){
+    df_comb0 <- cbind(d_temperature[init_id:(init_id + cell_nrow - 1),], d_cell)
+  } else if (cell_nrow > temp_nrow){
+    df_comb0 <- cbind(d_temperature[init_id:nrow(d_temperature),], d_cell[1:temp_nrow,])
+  }
+} else if (min_df_id == 2){
+  # d_temperature started first
+  time_dif_init <- abs(difftime(head(d_temperature$time_temp, n = 1), d_cell$time_cell, units = "mins"))
+  which.min(time_dif_init) ==  which(time_dif_init <= 0.5)[1] # Should be TRUE
+  init_id <- which(time_dif_init <= 0.5)[1]
+  # Calculate nrow
+  cell_nrow <- nrow(d_cell[init_id:nrow(d_cell),])
+  temp_nrow <- nrow(d_temperature)
+  # Combine data
+  if(cell_nrow <= temp_nrow){
+    df_comb0 <- cbind(d_temperature[1:cell_nrow,], d_cell[init_id:nrow(d_cell),])
+  } else if (cell_nrow > temp_nrow){
+    df_comb0 <- cbind(d_temperature, d_cell[init_id:(init_id + temp_nrow - 1),])
+  }
+}
+
+# Check time correspondence
+all(difftime(df_comb0$time_cell, df_comb0$time_temp, units = "mins") < 0.5)
+
+# Check colnames and re-compile
+colnames(df_comb0)
+df_comb0$time_rec <- round_date(df_comb0$time_temp, unit = "minute")
+df_comb <- tibble(df_comb0[,c("time_rec", "temperature", "density", "mean_area",
+                       "nndist", "nndist_sd", "nndist_skew", "nndist_kurt")]) #%>% na.omit
+rm(df_comb0)
+dim(df_comb)
+
+# Adjust NA
+na_row <- apply(apply(df_comb, 2, is.na), 1, any)
+df_comb[na_row,"nndist"] <- mean(df_comb$nndist, na.rm = T)
+df_comb[na_row,"nndist_sd"] <- mean(df_comb$nndist_sd, na.rm = T)
+df_comb[na_row,"nndist_skew"] <- mean(df_comb$nndist_skew, na.rm = T)
+df_comb[na_row,"nndist_kurt"] <- mean(df_comb$nndist_kurt, na.rm = T)
+
+
+# <---------------------------------------------> #
+#            Remove long-term trend
+#            and calculate residuals
+# <---------------------------------------------> #
+df_comb$density_resid <- gam(density ~ s(as.numeric(time_rec)), data = df_comb) %>% resid()
+df_comb$density_rel_resid <- df_comb$density_resid/(df_comb$density + 1)
+df_comb$density_rel_resid10 <- df_comb$density_resid/(df_comb$density + 10)
+df_comb$density_dif <- as.numeric(c(NA, diff(df_comb$density, lag = 1)))
+df_comb$density_rel_dif <- df_comb$density_dif/(df_comb$density + 1)
+
+
+# <---------------------------------------------> #
+#            Visualize dynamics
+# <---------------------------------------------> #
+line_width = 0.3
+g1 <- ggplot(df_comb, aes(x = time_rec, y = temperature)) +
+  geom_vline(xintercept = seq(min(df_comb$time_rec), max(df_comb$time_rec), by = "30 mins"),
+             color = "gray", alpha = 0.7, size = 0.3) +
+  geom_line(color = "red3", size = line_width) +
+  ylab(expression(paste("Temperature (", degree, "C)"))) +
+  xlab(NULL) +
+  NULL
+
+g2 <- ggplot(df_comb, aes(x = time_rec, y = density)) +
+  geom_vline(xintercept = seq(min(df_comb$time_rec), max(df_comb$time_rec), by = "30 mins"),
+             color = "gray", alpha = 0.7, size = 0.3) +
+  geom_smooth(method = "gam", color = "red3", se = F, size = 0.3) +
+  geom_line(size = line_width) +
+  ylab("Cell density (/image)") +
+  xlab(NULL) +
+  NULL
+  
+g3 <- ggplot(df_comb, aes(x = time_rec, y = density_resid)) +
+  geom_vline(xintercept = seq(min(df_comb$time_rec), max(df_comb$time_rec), by = "30 mins"),
+             color = "gray", alpha = 0.7, size = 0.3) +
+  geom_hline(yintercept = 0, color = "red3", linetype = 2) +
+  geom_line(size = line_width) +
+  ylab("Cell density\nresiduals (/image)") +
+  xlab(NULL) +
+  NULL
+
+g4 <- ggplot(df_comb, aes(x = time_rec, y = density_rel_resid)) +
+  geom_vline(xintercept = seq(min(df_comb$time_rec), max(df_comb$time_rec), by = "30 mins"),
+             color = "gray", alpha = 0.7, size = 0.3) +
+  geom_hline(yintercept = 0, color = "red3", linetype = 2) +
+  geom_line(size = line_width) +
+  ylab("GAM residuals \nper cell density + 1") +
+  xlab(NULL) +
+  NULL
+
+g5 <- ggplot(df_comb, aes(x = time_rec, y = density_rel_resid10)) +
+  geom_vline(xintercept = seq(min(df_comb$time_rec), max(df_comb$time_rec), by = "30 mins"),
+             color = "gray", alpha = 0.7, size = 0.3) +
+  geom_line(size = line_width) +
+  ylab("GAM residuals \nper cell density + 10") +
+  xlab(NULL) +
+  NULL
+
+g6 <- ggplot(df_comb, aes(x = time_rec, y = mean_area)) +
+  geom_vline(xintercept = seq(min(df_comb$time_rec), max(df_comb$time_rec), by = "30 mins"),
+             color = "gray", alpha = 0.7, size = 0.3) +
+  geom_line(size = line_width) +
+  ylab("Mean area") +
+  xlab(NULL) +
+  NULL
+
+g7 <- ggplot(df_comb[1:900,], aes(x = time_rec, y = density)) +
+  geom_vline(xintercept = seq(min(df_comb$time_rec), max(df_comb$time_rec), by = "30 mins"),
+             color = "gray", alpha = 0.7, size = 0.3) +
+  geom_smooth(method = "gam", color = "red3", se = F, size = 0.3) +
+  geom_line(size = line_width) +
+  ylab("Cell density (/image)") +
+  xlab(NULL) +
+  NULL
+
+g8 <- ggplot(df_comb[1:900,], aes(x = time_rec, y = density_resid)) +
+  geom_vline(xintercept = seq(min(df_comb$time_rec), max(df_comb$time_rec), by = "30 mins"),
+             color = "gray", alpha = 0.7, size = 0.3) +
+  geom_hline(yintercept = 0, color = "red3", linetype = 2) +
+  geom_line(size = line_width) +
+  ylab("Cell density\nresiduals (/image)") +
+  xlab(NULL) +
+  NULL
+
+ggsave(sprintf("%s/dynamics.pdf", output_folder),
+       plot = plot_grid(g1, g2, g7, g8, g3, g4, g5, g6, ncol = 2,
+                        align = "hv", axis = "btlf", byrow = F),
+       width = 14, height = 9)
+
+
+# <---------------------------------------------> #
+#                 Save output
+# <---------------------------------------------> #
+# Standardize data
+df_comb_std <- df_comb
+df_comb_std[,2:ncol(df_comb_std)] <- apply(df_comb_std[,2:ncol(df_comb_std)], 2, function(x) as.numeric(scale(x)))
+
+# Save output
+write.csv(df_comb, sprintf("%s/data_all.csv", output_folder), row.names = F)
+write.csv(df_comb_std, sprintf("%s/data_std_all.csv", output_folder), row.names = F)
+
+# Save workspace and objects
+save.image(sprintf("%s/%s.RData", output_folder, output_folder))
+
+# Save session info
+writeLines(capture.output(sessionInfo()),
+           sprintf("00_SessionInfo/%s_SessionInfo_%s.txt", output_folder, output_folder, substr(Sys.time(), 1, 10)))
+

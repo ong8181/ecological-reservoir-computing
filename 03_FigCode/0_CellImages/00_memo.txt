@@ -1,0 +1,14 @@
+Image data from v20210525_runif13
+Runif Input
+20210525, run13, 1.6% Modified Neff
+
+Medium concentration:
+Modified Neff = 200 ul
+H2O = 4750 ul
+Tetrahymena stock = 50 ul
+
+Pre-incubation = ca. 27C for overnight
+
+Pre-incubated medium = 2000 ul
+H2O = 3000 ul
+Total 5000 ul for Reservoir Computing
