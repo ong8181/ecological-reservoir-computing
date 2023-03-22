@@ -12,11 +12,12 @@ header-includes:
 - \pagenumbering{gobble}
 ---
 
+
 <center>
 
 ![
-**Figure 1. Conceptual illustrations of ecological reservoir computing (ERC) and how _in silico_ ERC is implemented.** (**a**) Conceptual illustrations of _in silico_ ERC and real-time ERC. _In silico_ ERC uses either equations or empirical dynamics reconstructed by empirical time series as a reservoir. Real-time ERC uses an empirical ecological interaction network as a reservoir. A node in an ecological reservoir may represent an individual, species, or abiotic variable in this study. (**b**) Examples of ecological time series, state space reconstruction, and scenario exploration for _in silico_ ERC. Two empirical time series are shown as examples: Fish catch time series of Japanese jack mackerel (_Trachurus japonicus_) and DNA copy number time series of _Emticicia_ sp. in water samples collected from experimental rice plots (Ushio 2022). Empirical attractor dynamics can be reconstructed by time-delay embedding (Embedding dimension = 3). The red inlet indicates that the behavior of a target point (light blue) is predicted by the behaviors (red arrows) of nearest neighbors (red points).
-](0_FormattedFigs/Fig_AllConcept.pdf){width=100%}
+**Figure 1. Conceptual illustrations of ecological reservoir computing (ERC) and how _in silico_ ERC is implemented.** (**a**) Conceptual illustrations of _in silico_ ERC and real-time ERC. _In silico_ ERC uses either equations or empirical dynamics reconstructed by empirical time series as a reservoir. In the present study, we mainly investigated the properties and performance of _in silico_ ERC using reconstructed dynamics. Real-time ERC uses an empirical ecological interaction network as a reservoir. A node in an ecological reservoir may represent an individual, species, or abiotic variable in this study.
+](0_FormattedFigs/Fig_Concept.pdf){width=100%}
 
 </center>
 
@@ -24,7 +25,17 @@ header-includes:
 <center>
 
 ![
-**Figure 2. Schematic illustrations of species-multiplexing and properties of _in silico_ ERC.** (**a**) Schematic illustrations of species-multiplexing using scenario exploration. Simulated ecosystem responses are collected to generate a "multiplexed reservoir state", which is used for the learning process. Red point in the reconstructed state space indicates the original vector, light blue point indicates perturbated vector, and blue point indicates the predicted response of the system by simplex projection (denoted by $f_{simp}$). (**b**) Echo state property (ESP) of the reconstructed fish reservoirs (47 fish species included). For each run, the computation of _in silico_ ERC started from two different initial conditions, and the dependence of the state difference on the time step was measured by the Euclidean distance between the two state. For each species, the numerical experiment repeated five times. (**c**) ESP of the reconstructed prokaryote reservoirs (500 prokaryote species included). $y$-axis in **b** and **c** indicates the difference between reservoir states started from different initial conditions and the difference converges to zero when the same input sequence is used. (**d**) An example of forgetting curves of reconstructed prokaryote reservoir. Forgotten curves of single-species prokaryotic reservoir (_Bdellovibrio_ sp.) and species-multiplexed prokaryotic reservoir are shown.
+**Figure 2. Schematic illustrations of _in silico_ ERC.**  (**a**) Examples of ecological time series, state space reconstruction, and scenario exploration for _in silico_ ERC. Two empirical time series are shown as examples: Fish catch time series of Japanese jack mackerel (_Trachurus japonicus_) and DNA copy number time series of _Emticicia_ sp. in water samples collected from experimental rice plots (Ushio 2022). Empirical attractor dynamics can be reconstructed by time-delay embedding (Embedding dimension = 3). The red inlet indicates that the behavior of a target point (light blue) is predicted by the behaviors (red arrows) of nearest neighbors (red points). (**b**) Schematic illustrations of species-multiplexing using scenario exploration. Simulated ecosystem responses are collected to generate a "multiplexed reservoir state", which is used for the learning process. Red point in the reconstructed state space indicates the original vector, light blue point indicates perturbated vector, and blue point indicates the predicted response of the system by simplex projection (denoted by $f_{simp}$).
+](0_FormattedFigs/Fig_InSilico_Illustration.pdf){width=80%}
+
+</center>
+
+
+
+<center>
+
+![
+**Figure 3. Echo state property and memory capacity of _in silico_ ERC.** (**a**) Echo state property (ESP) of the reconstructed fish reservoirs (47 fish species included). For each run, the computation of _in silico_ ERC started from two different initial conditions, and the dependence of the state difference on the time step was measured by the Euclidean distance between the two state. For each species, the numerical experiment repeated five times. (**b**) ESP of the reconstructed prokaryote reservoirs (500 prokaryote species included). $y$-axis in **a** and **b** indicates the difference between reservoir states started from different initial conditions and the difference converges to zero when the same input sequence is used. (**c**) An example of forgetting curves of reconstructed prokaryote reservoir. Forgotten curves of single-species prokaryotic reservoir (_Bdellovibrio_ sp.) and species-multiplexed prokaryotic reservoir are shown.
 ](0_FormattedFigs/Fig_InSilico_MultiERC.pdf){width=80%}
 
 </center>
@@ -32,7 +43,7 @@ header-includes:
 
 
 ![
-**Figure 3. The performance of species-multiplexed _in silico_ ecological reservoir computing (ERC)**. (**a**) Time series of Lorenz attractor (black points and lines) and one time-step future predictions by species-multiplexed _in silico_ ERC (red points and lines). (**b**) Correlation coefficients of observed and predicted values of Lorenz system and the number of species multiplexed. (**c**) Nonlinear autoregression moving average (NARMA) time series (black points and lines) and emulation by species-multiplexed _in silico_ ERC (red points and lines). NARMA is NARMA2 in this panel (**d**) Normalized mean square error (NMSE) of the NARMA emulations by species-multiplexed _in silico_ ERC (red points and lines) and echo state network (ESN; blue points and lines). (**e**) The closed-loop embedding of the Mackey-Glass equations by species-multiplexed _in silico_ ERC. The original attractor (black points and lines) was learned by the _in silico_ ERC and autonomous dynamics was generated from time point zero (red points and lines). (**f**) Two-dimensional representation of the original Mackey-Glass attractor (black points) and that generated by the _in silico_ ERC (red points).
+**Figure 4. The performance of species-multiplexed _in silico_ ecological reservoir computing (ERC)**. (**a**) Time series of Lorenz attractor (black points and lines) and one time-step future predictions by species-multiplexed _in silico_ ERC (red points and lines). (**b**) Correlation coefficients of observed and predicted values of Lorenz system and the number of species multiplexed. (**c**) Nonlinear autoregression moving average (NARMA) time series (black points and lines) and emulation by species-multiplexed _in silico_ ERC (red points and lines). NARMA is NARMA2 in this panel (**d**) Normalized mean square error (NMSE) of the NARMA emulations by species-multiplexed _in silico_ ERC (red points and lines) and echo state network (ESN; blue points and lines). (**e**) The closed-loop embedding of the Mackey-Glass equations by species-multiplexed _in silico_ ERC. The original attractor (black points and lines) was learned by the _in silico_ ERC and autonomous dynamics was generated from time point zero (red points and lines). (**f**) Two-dimensional representation of the original Mackey-Glass attractor (black points) and that generated by the _in silico_ ERC (red points).
 ](0_FormattedFigs/Fig_InSilico_NarmaMackey.pdf){width=100%}
 
 </center>
@@ -42,8 +53,8 @@ header-includes:
 <center>
 
 ![
-**Figure 4. The experimental set up of _Tetrahymena thermophila_ reservoir.** (**a**) Illustrations of experimental set up. (**b**,**c**) Pre-incubated _Tetrahymena_ population is maintained in an aluminum chamber. The total medium volume is five ml, and the concentration of nutrient is adjusted to change parameters of the population dynamics. (**d**) Cell images were taken from the bottom of the chamber. The number of cells was counted using a custom image analysis pipeline. (**e**) We used 1.6%, 4%, and 10% modified Neff medium in the experiments. Temperature information first transmits from the regulator to the aluminum chamber, and then propagates to several nodes in the medium and _Tetrahymena_. The temperature information is processed through complex interactions among temperature, medium, and behavior and physiology and _Tetrahymena_. The number of cells at the bottom of the chamber may contain the processed information and we use it as a reservoir state. Reservoir states of different nutrient concentrations were used to improve the performance of real-time ERC (i.e., space multiplexing) (**f**) Time series indicate input temperature (dense red), medium temperature (red), and a population density index (relative residual of the population density) in a 4% (blue line; Low nutrient), 1.6% (orange line; Med. nutrient), or 10% (brown line; High nutrient) modified Neff medium. Black line indicates population density index of _Tetrahymena_ in a 4% modified Neff medium in response to a different temperature input sequence.
-](0_FormattedFigs/Fig_InRealTime_Setup.pdf){width=80%}
+**Figure 5. The experimental set up of _Tetrahymena thermophila_ reservoir.** (**a**) Illustrations of experimental set up. (**b**,**c**) Pre-incubated _Tetrahymena_ population is maintained in an aluminum chamber. The total medium volume is five ml, and the concentration of nutrient is adjusted to change parameters of the population dynamics. (**d**) Cell images were taken from the bottom of the chamber. The number of cells was counted using a custom image analysis pipeline. (**e**) We used 1.6%, 4%, and 10% modified Neff medium in the experiments. Temperature information first transmits from the regulator to the aluminum chamber, and then propagates to several nodes in the medium and _Tetrahymena_. The temperature information is processed through complex interactions among temperature, medium, and behavior and physiology and _Tetrahymena_. The number of cells at the bottom of the chamber may contain the processed information and we use it as a reservoir state. Reservoir states of different nutrient concentrations were used to improve the performance of real-time ERC (i.e., space multiplexing) (**f**) Time series indicate input temperature (dense red), medium temperature (red), and a population density index (relative residual of the population density) in a 4% (blue line; Low nutrient), 1.6% (orange line; Med. nutrient), or 10% (brown line; High nutrient) modified Neff medium. Black line indicates population density index of _Tetrahymena_ in a 4% modified Neff medium in response to a different temperature input sequence.
+](0_FormattedFigs/Fig_RealTime_Setup.pdf){width=80%}
 
 </center>
 
@@ -52,8 +63,8 @@ header-includes:
 <center>
 
 ![
-**Figure 5.** Echo state property (ESP) of real-time ecological reservoir computing (ERC). Two runs for each medium concentration were tested and the input sequence was identical for (**a**–**F**). (**a**, **b**) Comparison of two reservoir states (i.e., relative GAM residuals explained in Fig. S5; Run1 and Run2) where the same input sequence was added in 4% Neff medium. Time series plot (**a**) and scattered plot (**b**). (**c**, **d**) Comparison of two reservoir states in 1.6% Neff medium (Run3 and Run4) and (**e**, **f**) in 10% Neff medium (Run5 and Run6). (**g**, **h**) Comparison of two reservoir states in 4% Neff medium, but the input sequence was different for Run1 and Run11. Reservoir outputs converged for the identical inputs when the medium concentration was the same (**a**-**f**). On the other hand, the reservoir outputs did not converge when the input sequences were different (**g**, **h**). Red and dashed lines indicate GAM regression and 1:1 line, respectively.
-](0_FormattedFigs/Fig_InRealTime_StateESP.pdf)
+**Figure 6.** Echo state property (ESP) of real-time ecological reservoir computing (ERC). Two runs for each medium concentration were tested and the input sequence was identical for (**a**–**F**). (**a**, **b**) Comparison of two reservoir states (i.e., relative GAM residuals explained in Fig. S5; Run1 and Run2) where the same input sequence was added in 4% Neff medium. Time series plot (**a**) and scattered plot (**b**). (**c**, **d**) Comparison of two reservoir states in 1.6% Neff medium (Run3 and Run4) and (**e**, **f**) in 10% Neff medium (Run5 and Run6). (**g**, **h**) Comparison of two reservoir states in 4% Neff medium, but the input sequence was different for Run1 and Run11. Reservoir outputs converged for the identical inputs when the medium concentration was the same (**a**-**f**). On the other hand, the reservoir outputs did not converge when the input sequences were different (**g**, **h**). Red and dashed lines indicate GAM regression and 1:1 line, respectively.
+](0_FormattedFigs/Fig_RealTime_StateESP.pdf)
 
 </center>
 
@@ -61,8 +72,8 @@ header-includes:
 <center>
 
 ![
-**Figure 6. Memory capacity of the _Tetrahymena_ reservoirs.** (**a**) Memory capacity of the _Tetrahymena_ reservoir measured using three time series of population density index (from three medium concentrations) as a training set and the other three time series as a test set (total six time series were used). Red points and lines indicate how well the _Tetrahymena_ dynamics remembers the uniform random inputs. Blue points and lines indicate temporal correlations. (**b**) Correlations between observed and predicted values of uniform random inputs. Red dashed line indicates 1:1 line. (**c**) Observed (gray points and lines) and predicted (red points and lines) time series of uniform random inputs. In the panel **c**, temperatures five minutes ago were predicted by the states of the _Tetrahymena_ reservoir. (**d**) Measurements of the medium temperatures five minutes ago by the _Tetrahymena_ reservoir, suggesting that the _Tetrahymena_ reservoir may work as a thermometer (_Tetrahymena_ thermometer). (**e**) Correlations between observed and predicted temperature by the _Tetrahymena_ thermometer.
-](0_FormattedFigs/Fig_InRealTime_MC.pdf){width=100%}
+**Figure 7. Memory capacity of the _Tetrahymena_ reservoirs.** (**a**) Memory capacity of the _Tetrahymena_ reservoir measured using three time series of population density index (from three medium concentrations) as a training set and the other three time series as a test set (total six time series were used). Red points and lines indicate how well the _Tetrahymena_ dynamics remembers the uniform random inputs. Blue points and lines indicate temporal correlations. (**b**) Correlations between observed and predicted values of uniform random inputs. Red dashed line indicates 1:1 line. (**c**) Observed (gray points and lines) and predicted (red points and lines) time series of uniform random inputs. In the panel **c**, temperatures five minutes ago were predicted by the states of the _Tetrahymena_ reservoir. (**d**) Measurements of the medium temperatures five minutes ago by the _Tetrahymena_ reservoir, suggesting that the _Tetrahymena_ reservoir may work as a thermometer (_Tetrahymena_ thermometer). (**e**) Correlations between observed and predicted temperature by the _Tetrahymena_ thermometer.
+](0_FormattedFigs/Fig_RealTime_MC.pdf){width=100%}
 
 </center>
 
@@ -70,8 +81,8 @@ header-includes:
 <center>
 
 ![
-**Figure 7. The relationship between prediction accuracy (Normalized Mean Square Error; NMSE) and prediction time step.** (**f**) Lorenz attractor, (**g**) flatfish time series, and (**h**) Japanese jack mackerel time series. Red points and lines indicate predictions by the _Tetrahymena_ reservoir, and blue points and lines indicate predictions by ridge regressions. Time series of observed (gray points and lines) and predicted (red points and values) of (**i**) Lorenz attractor with 15 time-step future prediction, (**f**) flatfish time series with 19 weeks future prediction, and (**k**) Japanese jack mackerel time series with 30 weeks future prediction.
-](0_FormattedFigs/Fig_InRealTime_Predict.pdf){width=100%}
+**Figure 8. The relationship between prediction accuracy (Normalized Mean Square Error; NMSE) and prediction time step.** (**f**) Lorenz attractor, (**g**) flatfish time series, and (**h**) Japanese jack mackerel time series. Red points and lines indicate predictions by the _Tetrahymena_ reservoir, and blue points and lines indicate predictions by ridge regressions. Time series of observed (gray points and lines) and predicted (red points and values) of (**i**) Lorenz attractor with 15 time-step future prediction, (**f**) flatfish time series with 19 weeks future prediction, and (**k**) Japanese jack mackerel time series with 30 weeks future prediction.
+](0_FormattedFigs/Fig_RealTime_Predict.pdf){width=100%}
 
 </center>
 
@@ -116,7 +127,7 @@ header-includes:
 
 ![
 **Figure S5.** Calculation of reservoir state of real-time ecological reservoir computing (ERC). (**a**) Processing of _Tetrahymena_ cell images. Images ($\times40$) were obtained using an optical inverted microscope (the image covers _ca_. 1.8 mm width $\times$ 1.35 mm height). The background of the image was subtracted, converted to the gray-scale, and cells were counted by the watershed algorithm. (**b**) Change in the _Tetrahymena_ cell density. Solid red line indicates a trend estimated by general additive model (GAM regression). (**c**) Residuals of GAM regression. Dashed red line indicates zero. (**d**) Relative GAM residuals. GAM residuals divided by [cell density + 10] to stabilize the fluctuations, which is used as reservoir state of real-time ERC.
-](0_FormattedFigs/Fig_InRealTime_CellCount.pdf)
+](0_FormattedFigs/Fig_RealTime_CellCount.pdf)
 
 </center>
 
@@ -125,7 +136,7 @@ header-includes:
 
 ![
 **Figure S6.** Input sequences, medium temperature, and six reservoir states of ecological reservoir. (**a**) Input sequence that represents Lorenz system and the responses of _Tetrahymena_ reservoir. (**b**) Input sequence that represents _Paralichthys olivaceus_ time series and the reservoir responses. (**c**) Input sequence that represents _Trachurus japonicus_ time series and the reservoir responses. The first top and second top time series indicate input temperature and medium temperature, respectively. The dark blue (third and fourth top), orange, and dark red lines indicate reservoir states of middle (4%), low (1.6%) and high (10%) medium conditions, respectively.
-](0_FormattedFigs/Fig_InRealTime_ReservoirState.pdf)
+](0_FormattedFigs/Fig_RealTime_ReservoirState.pdf)
 
 </center>
 

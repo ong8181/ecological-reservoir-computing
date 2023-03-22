@@ -26,8 +26,8 @@ dir.create(fig_output_dir)
 #                   Load figure data
 # <----------------------------------------------------> #
 # Concept illustration
-fig_erc_concept <- image_read("0_Illustrations/ERCpaper_Fig1_v9.jpg") 
-fig_spmulti <- image_read("0_Illustrations/ERCpaper_Fig2_v3.jpg") 
+fig_erc_concept <- image_read("0_Illustrations/ERCpaper_Fig1_v10.jpg") 
+fig_spmulti <- image_read("0_Illustrations/ERCpaper_Fig2_v4.jpg") 
 # Load IPC figures
 fig_ipc_rank1 <- image_read("../01_ERCinsilico/FigCode/0_FigObj/IPC_rank1.jpg") 
 fig_ipc_rank2 <- image_read("../01_ERCinsilico/FigCode/0_FigObj/IPC_rank2.jpg")
@@ -172,21 +172,20 @@ Fig_MultiERC_Prop <- plot_grid(g_esp1, g_esp2,
                                        plot.margin = margin(0,1.35,0,0.85,"cm"),
                                        plot.title = element_text(size = 12, face = "plain")),
                                get_legend( fig_erc_memory[[1]] ),
-                               ncol = 2, labels = c("b", "c", "d", NA))
-Fig_MultiERC <- plot_grid(Fig_SpMulti, Fig_MultiERC_Prop, ncol = 1,
-                          labels = c("a", NA), rel_heights = c(0.8,1.1))
+                               ncol = 2, labels = c("a", "b", "c", NA))
 
 
 # <----------------------------------------------------> #
 #                  Save figures
 # <----------------------------------------------------> #
-ggsave2(sprintf("%s/Fig_AllConcept.pdf", fig_output_dir), Fig_Concept, width = 11, height = 10)
+ggsave2(sprintf("%s/Fig_Concept.pdf", fig_output_dir), Fig_Concept, width = 11, height = 4)
 ggsave2(sprintf("%s/Fig_InSilico_NarmaMackey.pdf", fig_output_dir), Fig_NarmaMackey, width = 12, height = 10)
 ggsave2(sprintf("%s/Fig_InSilico_IPC.pdf", fig_output_dir), Fig_IPC, width = 8, height = 10)
 ggsave2(sprintf("%s/Fig_InSilico_Logistic.pdf", fig_output_dir), Fig_Logistic + theme(plot.margin = unit(c(0,.5,0,.5), "cm")), width = 8, height = 8)
+ggsave2(sprintf("%s/Fig_InSilico_Illustration.pdf", fig_output_dir), Fig_SpMulti, width = 8, height = 8)
 
 # ! these files are heavy and not included in the Github repository ! #
 # Please contact ong8181@gmail.com if necessary
 # Or please reproduce them executing the codes
-ggsave2(sprintf("%s/Fig_InSilico_MultiERC.pdf", fig_output_dir), Fig_MultiERC, width = 8, height = 10)
+ggsave2(sprintf("%s/Fig_InSilico_MultiERC.pdf", fig_output_dir), Fig_MultiERC_Prop, width = 8, height = 6)
 
