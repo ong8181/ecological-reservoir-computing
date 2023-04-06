@@ -1,6 +1,6 @@
 # Analysis codes for Ushio et al. "Computational capability of ecological dynamics"
 [![DOI](https://zenodo.org/badge/604887497.svg)](https://zenodo.org/badge/latestdoi/604887497)  
-This repository contains analysis codes to reproduce the results in Ushio et al. (2021) "Computational capability of ecological dynamics" _bioRxiv_ https://doi.org/10.1101/2021.09.15.460556.
+This repository contains analysis codes to reproduce the results in Ushio et al. (in press) _Royal Society Open Science_ https://doi.org/10.1098/rsos.221614. The _bioRxiv_ version is also available: Ushio et al. (2021) "Computational capability of ecological dynamics" _bioRxiv_ https://doi.org/10.1101/2021.09.15.460556.
 
 # License
 see LICENSE.
